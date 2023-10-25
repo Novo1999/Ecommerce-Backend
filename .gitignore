@@ -1,3 +1,5 @@
 node_modules
 .env
 process.env.d.ts
+populate.ts
+mockData.json
