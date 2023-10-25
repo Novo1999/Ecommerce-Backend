@@ -35,7 +35,7 @@ export const validateRegisterUser = validationMiddleware([
     .notEmpty()
     .withMessage('Email cannot be empty')
     .isEmail()
-    .withMessage('invalid email')
+    .withMessage('invalid emails')
     .custom(async (email) => {
       const isUserExist = await User.findOne({ email: email.toLowerCase() })
       if (isUserExist)
