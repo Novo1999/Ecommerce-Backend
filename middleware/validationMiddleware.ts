@@ -1,9 +1,4 @@
-import {
-  ValidationChain,
-  body,
-  param,
-  validationResult,
-} from 'express-validator'
+import { body, param, validationResult } from 'express-validator'
 import { Request, Response, NextFunction } from 'express'
 import User from '../model/User.ts'
 import { BadRequestError } from '../errors/customErrors.ts'
@@ -20,7 +15,6 @@ export const validationMiddleware = (validate: any) => {
       const errorMessages = errors.array().map((err) => err.msg) as any[string]
 
       res.status(StatusCodes.BAD_REQUEST).json({ err: errorMessages })
-      throw new BadRequestError(errorMessages)
     },
   ]
 }
@@ -35,7 +29,7 @@ export const validateRegisterUser = validationMiddleware([
     .notEmpty()
     .withMessage('Email cannot be empty')
     .isEmail()
-    .withMessage('invalid emails')
+    .withMessage('invalid email')
     .custom(async (email) => {
       const isUserExist = await User.findOne({ email: email.toLowerCase() })
       if (isUserExist)
@@ -48,4 +42,13 @@ export const validateRegisterUser = validationMiddleware([
     .withMessage('Password cannot be empty')
     .isLength({ min: 6 })
     .withMessage('Password must be at least 6 characters'),
+])
+
+export const validateLoginUser = validationMiddleware([
+  body('email')
+    .notEmpty()
+    .withMessage('Email cannot be empty')
+    .isEmail()
+    .withMessage('invalid email'),
+  body('password').notEmpty().withMessage('Password cannot be empty'),
 ])
