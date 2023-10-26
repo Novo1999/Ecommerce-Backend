@@ -1,23 +1,35 @@
-import { body, param, validationResult } from 'express-validator'
+import { body, param, query, validationResult } from 'express-validator'
 import { Request, Response, NextFunction } from 'express'
 import User from '../model/User.ts'
-import { BadRequestError } from '../errors/customErrors.ts'
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from '../errors/customErrors.ts'
 import { StatusCodes } from 'http-status-codes'
+import Products from '../model/Products.ts'
+import { Types } from 'mongoose'
 
 export const validationMiddleware = (validate: any) => {
   return [
     validate,
     (req: Request, res: Response, next: NextFunction) => {
       const errors = validationResult(req)
-      if (errors.isEmpty()) {
-        return next()
+      if (!errors.isEmpty()) {
+        const errorMessages = errors
+          .array()
+          .map((err) => err.msg) as any[string]
+        if (errorMessages[0].startsWith('Cast')) {
+          throw new NotFoundError('Invalid Product id')
+        }
+        throw new BadRequestError(errorMessages)
       }
-      const errorMessages = errors.array().map((err) => err.msg) as any[string]
-
-      res.status(StatusCodes.BAD_REQUEST).json({ err: errorMessages })
+      next()
     },
   ]
 }
+
+// REGISTER AND LOGIN
 
 export const validateRegisterUser = validationMiddleware([
   body('name')
@@ -51,4 +63,18 @@ export const validateLoginUser = validationMiddleware([
     .isEmail()
     .withMessage('invalid email'),
   body('password').notEmpty().withMessage('Password cannot be empty'),
+])
+
+// PRODUCTS
+
+export const validateProduct = validationMiddleware([
+  param('id').custom(async (id) => {
+    const isValidMongoId = Types.ObjectId.isValid(id)
+
+    const isProductAvailable = await Products.findById(id)
+
+    if (!isValidMongoId) throw new BadRequestError('')
+
+    if (!isProductAvailable) throw new NotFoundError('No product by that id')
+  }),
 ])

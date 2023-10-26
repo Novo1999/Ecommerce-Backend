@@ -4,11 +4,12 @@ import mongoose from 'mongoose'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
 import cors from 'cors'
-import cookieParser from 'cookie-parser'
 import helmet from 'helmet'
 import bodyParser from 'body-parser'
 import mongoSanitize from 'express-mongo-sanitize'
 import authRouter from './routes/auth.js'
+import productRouter from './routes/products.ts'
+import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.ts'
 
 dotenv.config()
 
@@ -25,6 +26,9 @@ app.use(helmet())
 app.use(mongoSanitize())
 
 app.use('/api/e-commerce/auth', authRouter)
+app.use('/api/e-commerce/products', productRouter)
+
+app.use(errorHandlerMiddleware)
 
 try {
   await mongoose.connect(process.env.MONGO_URL!)
