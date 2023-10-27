@@ -3,7 +3,6 @@ import {
   getAllProducts,
   getProductByCategory,
   getSingleProduct,
-  sortByPrice,
 } from '../controllers/products.ts'
 import { validateProduct } from '../middleware/validationMiddleware.ts'
 
@@ -13,6 +12,5 @@ router
   .get('/all-product?:sort', getAllProducts)
   .get('/product/:id', validateProduct, getSingleProduct)
   .get('/product?:category', getProductByCategory)
-  .get('/price?:sort', sortByPrice)
 
 export default router

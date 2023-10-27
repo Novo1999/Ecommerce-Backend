@@ -38,19 +38,14 @@ export const getSingleProduct = async (req: Request, res: Response) => {
   const { id } = req.params
   const product = await Products.findById(id)
 
-  const allProducts = await Products.find({})
-
-  // product cant be same and have categories matched
-  let relatedProducts = allProducts.filter(
-    (item) => item.id !== product?.id && item.category === product?.category
-  )
-
-  if (relatedProducts.length > 3) relatedProducts = relatedProducts.slice(0, 3)
-
-  res.status(StatusCodes.OK).json({
-    product,
-    relatedProducts: relatedProducts.length === 0 ? 'none' : relatedProducts,
+  // this returns 3 related products that matches the category and makes sure the same product is not returned
+  const relatedProducts = await Products.find({
+    category: product?.category,
   })
+    .where('_id')
+    .ne(id)
+    .limit(3)
+  res.status(StatusCodes.OK).json({ product, relatedProducts })
 }
 
 // user chooses category from dropdown or types in url
@@ -74,16 +69,3 @@ export const getProductByCategory = async (req: Request, res: Response) => {
 
   res.status(StatusCodes.OK).json(products)
 }
-
-export const sortByPrice = async (req: Request, res: Response) => {
-  const { sort } = req.query
-  const sortedProducts = await Products.find({}).sort({ price: sort as any })
-
-  res.status(StatusCodes.OK).json(sortedProducts)
-}
-// export const sortByPrice = async (req: Request, res: Response) => {
-//   const { sort } = req.query
-//   const sortedProducts = await Products.find({}).sort({ price: sort as any })
-
-//   res.status(StatusCodes.OK).json(sortedProducts)
-// }
