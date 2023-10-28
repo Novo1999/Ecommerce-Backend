@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "main": "server.ts",
   "type": "module",
-  "engines": {
-    "node": "14.x"
-  },
   "scripts": {
     "start": "nodemon server.ts",
-    "server": "nodemon server",
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "vercel-build": "echo hello"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "dependencies": {
     "@types/bcryptjs": "^2.4.4",
     "bcryptjs": "^2.4.3",
@@ -37,6 +42,8 @@
     "@types/morgan": "^1.9.6",
     "@types/node": "^20.8.2",
     "nodemon": "^3.0.1",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^5.0.5",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   }
