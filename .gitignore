@@ -3,3 +3,4 @@ node_modules
 process.env.d.ts
 populate.ts
 mockData.json
+.vercel
