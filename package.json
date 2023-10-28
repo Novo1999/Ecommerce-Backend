@@ -7,7 +7,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "start": "ts-node server.ts",
+    "start": "nodemon server.ts",
     "server": "nodemon server",
     "vercel-build": "echo hello"
   },
