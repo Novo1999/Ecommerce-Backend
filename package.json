@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "nodemon server",
-    "server": "nodemon server"
+    "server": "nodemon server",
+    "vercel-build": "echo hello"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.4",
